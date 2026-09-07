@@ -23,7 +23,7 @@ const allowedOrigins = (() => {
     'https://f-psi-kohl.vercel.app',
     'https://b-p6olwcciz-invtroll.vercel.app',
     'http://localhost:5173',
-    'https://backend-zeta-steel-44.vercel.app/
+    'https://backend-zeta-steel-44.vercel.app/'
   ];
 })();
 
