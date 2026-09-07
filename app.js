@@ -29,12 +29,12 @@ const allowedOrigins = (() => {
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(cors({
-  origin: "https://f-psi-kohl.vercel.app",
+  origin: "https://f-psi-kohl..app",
   credentials: true
 }));
 
 app.use(hpp());
-app.use(
+app.use(vercel
   compression({
     level: 6,
     threshold: 0,
