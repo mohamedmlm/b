@@ -16,7 +16,6 @@ const https = require("https");
 const compression = require("compression");
 require("dotenv").config();
 
-// Configure CORS: use a whitelist (from env `Config`) or sensible defaults
 const allowedOrigins = (() => {
   if (process.env.Config) return [process.env.Config];
   return [
