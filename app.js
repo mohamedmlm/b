@@ -16,12 +16,28 @@ const https = require("https");
 const compression = require("compression");
 require("dotenv").config();
 
+// Configure CORS: use a whitelist (from env `Config`) or sensible defaults
+const allowedOrigins = (() => {
+  if (process.env.Config) return [process.env.Config];
+  return [
+    'https://f-psi-kohl.vercel.app',
+    'https://b-p6olwcciz-invtroll.vercel.app',
+    'http://localhost:5173',
+  ];
+})();
+
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   }),
 );
+
+app.options('*', cors({ origin: allowedOrigins, credentials: true }));
 app.use(hpp());
 app.use(compression({
   level: 6,
