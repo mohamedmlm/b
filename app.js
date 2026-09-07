@@ -27,10 +27,12 @@ const allowedOrigins = (() => {
 
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
-app.use(cors({
-  origin: "https://f-psi-kohl.vercel.app",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "https://f-psi-kohl.vercel.app",
+    credentials: true,
+  }),
+);
 
 app.use(hpp());
 app.use(
@@ -72,11 +74,11 @@ app.use("/ItemImages", express.static(path.join(__dirname, "Uploads/items")));
 app.use(express.json());
 
 // Health check for quick runtime verification
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', time: Date.now() });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", time: Date.now() });
 });
 
-console.log('App initialization complete');
+console.log("App initialization complete");
 
 app.use("/users", userRouter);
 app.use("/items", itemRouter);
@@ -100,11 +102,10 @@ const startServer = async () => {
         console.log(`✅ HTTPS Server running on port ${PORT}`);
       });
     } else {}*/
-      const PORT = process.env.PORT || 3443;
-      app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-      });
-    
+    const PORT = process.env.PORT || 3443;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
 
     setInterval(
       async () => {
