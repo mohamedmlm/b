@@ -1,5 +1,9 @@
 const User = require("../data/user.shema");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
+const { promisify } = require("util");
+// promisified wrappers so existing `await bcrypt.hash/compare` usage continues to work
+const bcryptHash = promisify(bcrypt.hash);
+const bcryptCompare = promisify(bcrypt.compare);
 const sanitizeHtml = require("sanitize-html");
 const asyncwrapper = require("../modules/error/asyncwrapper");
 const createToken = require("../modules/authentication/create_token");
@@ -71,10 +75,10 @@ const register = asyncwrapper(async (req, res) => {
     });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcryptHash(password, 10);
 
   const verificationCode = generateVerificationCode();
-  const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+  const hashedVerificationCode = await bcryptHash(verificationCode, 10);
 
   const emailSent = await sendVerificationCode(email, verificationCode);
   if (!emailSent) {
@@ -125,7 +129,7 @@ const verfication_register = asyncwrapper(async (req, res) => {
       });
   }
 
-  const isMatch = await bcrypt.compare(
+  const isMatch = await bcryptCompare(
     verificationCode.toString(),
     user.verificationCode,
   );
@@ -178,7 +182,7 @@ const login = asyncwrapper(async (req, res) => {
       .json({ message: "Invalid username/email or password" });
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await bcryptCompare(password, user.password);
   if (!isPasswordValid) {
     return res
       .status(400)
@@ -190,7 +194,7 @@ const login = asyncwrapper(async (req, res) => {
   }
 
   const verificationCode = generateVerificationCode();
-  const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+  const hashedVerificationCode = await bcryptHash(verificationCode, 10);
 
   user.verificationCode = hashedVerificationCode;
   user.notExpiredUntil = Date.now() + 10 * 60 * 1000;
@@ -227,7 +231,7 @@ const verfication_login = asyncwrapper(async (req, res) => {
       .json({ msg: "Verification code expired. Please login again." });
   }
 
-  const isMatch = await bcrypt.compare(
+  const isMatch = await bcryptCompare(
     verificationCode.toString(),
     user.verificationCode,
   );
@@ -261,7 +265,7 @@ const forgotpassword = asyncwrapper(async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ msg: "User not found" });
   const verificationCode = generateVerificationCode();
-  const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+  const hashedVerificationCode = await bcryptHash(verificationCode, 10);
   user.verificationCode = hashedVerificationCode;
   user.notExpiredUntil = Date.now() + 10 * 60 * 1000;
   await user.save();
@@ -291,7 +295,7 @@ const verfication_forgotpassword = asyncwrapper(async (req, res) => {
       .status(400)
       .json({ msg: "Verification code expired. Please try again." });
   }
-  const isMatch = await bcrypt.compare(
+  const isMatch = await bcryptCompare(
     verificationCode.toString(),
     user.verificationCode,
   );
@@ -305,7 +309,7 @@ const verfication_forgotpassword = asyncwrapper(async (req, res) => {
       msg: "Please choose a stronger password.",
     });
   }
-  user.password = await bcrypt.hash(newPassword, 10);
+  user.password = await bcryptHash(newPassword, 10);
   user.verificationCode = null;
   user.notExpiredUntil = null;
   await user.save();
@@ -369,7 +373,7 @@ const edituser = asyncwrapper(async (req, res) => {
       .json({ msg: "Password must be at least 8 characters and at max 25" });
   }
   editeduser.name = name;
-  editeduser.password = await bcrypt.hash(password, 10);
+  editeduser.password = await bcryptHash(password, 10);
   editeduser.avatar = avatar;
   await editeduser.save();
   res.status(200).json({ msg: "User updated successfully" });
