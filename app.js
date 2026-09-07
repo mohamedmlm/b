@@ -28,8 +28,6 @@ const allowedOrigins = (() => {
 
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
-import cors from "cors";
-// ...
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
