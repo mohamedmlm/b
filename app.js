@@ -19,30 +19,21 @@ require("dotenv").config();
 const allowedOrigins = (() => {
   if (process.env.Config) return [process.env.Config];
   return [
-    'https://f-psi-kohl.vercel.app',
-    'https://b-p6olwcciz-invtroll.vercel.app',
-    'http://localhost:5173',
-    'https://backend-zeta-steel-44.vercel.app'
+    "https://f-psi-kohl.vercel.app",
+    "https://b-p6olwcciz-invtroll.vercel.app",
+    "http://localhost:5173",
+    "https://backend-zeta-steel-44.vercel.app",
   ];
 })();
 
+app.options("*", cors({ origin: allowedOrigins, credentials: true }));
+app.use(hpp());
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
-      return callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
+  compression({
+    level: 6,
+    threshold: 0,
   }),
 );
-
-app.options('*', cors({ origin: allowedOrigins, credentials: true }));
-app.use(hpp());
-app.use(compression({
-  level: 6,
-  threshold: 0
-}));   
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(
@@ -110,7 +101,9 @@ const startServer = async () => {
             timetodeleteuser: { $lte: Date.now() },
           });
           if (result.deletedCount > 0) {
-            console.log(`Deleted ${result.deletedCount} user(s) with unverified email`);
+            console.log(
+              `Deleted ${result.deletedCount} user(s) with unverified email`,
+            );
           }
         } catch (error) {
           console.log("Cleanup error:", error);
