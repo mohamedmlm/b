@@ -73,7 +73,7 @@ app.use("/payments", payRouter);
 
 const startServer = async () => {
   try {
-    await db();
+    /*await db();
 
     const PORT = process.env.PORT || 3443;
     const isProduction = process.env.NODE_ENV === "production";
@@ -87,11 +87,12 @@ const startServer = async () => {
       https.createServer(options, app).listen(PORT, () => {
         console.log(`✅ HTTPS Server running on port ${PORT}`);
       });
-    } else {
+    } else {}*/
+      const PORT = process.env.PORT || 3443;
       app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
       });
-    }
+    
 
     setInterval(
       async () => {
