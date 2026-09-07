@@ -9,7 +9,9 @@ const asyncwrapper = require("../modules/error/asyncwrapper");
 const createToken = require("../modules/authentication/create_token");
 const role = require("../modules/authentication/role");
 const measurePasswordStrength = require("../modules/validator/passpowval");
-const {sendVerificationCode} = require("../modules/gmail_verfication/gmail_information");
+const {
+  sendVerificationCode,
+} = require("../modules/gmail_verfication/gmail_information");
 const Comment = require("../data/comment.shema");
 const Item = require("../data/item.shema");
 const Pay = require("../data/pay.shema");
@@ -122,11 +124,9 @@ const verfication_register = asyncwrapper(async (req, res) => {
   }
 
   if (!user.notExpiredUntil || user.notExpiredUntil <= Date.now()) {
-    return res
-      .status(400)
-      .json({
-        msg: "The verification code has expired. Please register again.",
-      });
+    return res.status(400).json({
+      msg: "The verification code has expired. Please register again.",
+    });
   }
 
   const isMatch = await bcryptCompare(
@@ -389,11 +389,9 @@ const deleteuser = asyncwrapper(async (req, res) => {
   });
 
   if (blockingPay) {
-    return res
-      .status(400)
-      .json({
-        msg: "Cannot delete your account while you have an unpaid payment request older than 30 minutes",
-      });
+    return res.status(400).json({
+      msg: "Cannot delete your account while you have an unpaid payment request older than 30 minutes",
+    });
   }
 
   const user = await User.findByIdAndDelete(id);
