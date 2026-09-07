@@ -27,6 +27,9 @@ const allowedOrigins = (() => {
 })();
 
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
+
+
+
 app.use(hpp());
 app.use(
   compression({
