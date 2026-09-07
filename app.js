@@ -17,7 +17,6 @@ const compression = require("compression");
 require("dotenv").config();
 
 const allowedOrigins = (() => {
-  if (process.env.Config) return [process.env.Config];
   return [
     "https://f-psi-kohl.vercel.app",
     "https://b-p6olwcciz-invtroll.vercel.app",
