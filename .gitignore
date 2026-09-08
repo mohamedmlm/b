@@ -1,7 +1,0 @@
-node_modules
-.env
-Uploads/avatar/*
-!Uploads/avatar/.gitkeep
-Uploads/items/*
-!Uploads/items/.gitkeep
-*.log
