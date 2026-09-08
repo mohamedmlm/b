@@ -16,15 +16,6 @@ const https = require("https");
 const compression = require("compression");
 require("dotenv").config();
 
-const allowedOrigins = (() => {
-  return [
-    "https://f-psi-kohl.vercel.app",
-    "https://b-p6olwcciz-invtroll.vercel.app",
-    "http://localhost:5173",
-    "https://backend-zeta-steel-44.vercel.app",
-  ];
-})();
-
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(
