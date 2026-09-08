@@ -20,8 +20,8 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "*",
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: "https://crocsstorefm.vercel.app/",
+        allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
