@@ -19,12 +19,7 @@ require("dotenv").config();
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(
-  cors({
-    // allow all origins (for testing) — echo request origin when credentials are used
-    origin: true,
-    credentials: true,
-    optionsSuccessStatus: 200,
-  }),
+  c
 );
 
 app.use(hpp());
