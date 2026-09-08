@@ -87,9 +87,8 @@ app.use("/payments", payRouter);
 
 const startServer = async () => {
   try {
-    /*await db();
-
-    const PORT = process.env.PORT || 3443;
+    await db();
+    /*
     const isProduction = process.env.NODE_ENV === "production";
     const isHTTPS = process.env.USE_HTTPS === "true";
 
