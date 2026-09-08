@@ -29,7 +29,7 @@ const allowedOrigins = (() => {
 
 app.use(
   cors({
-    origin: "https://f-psi-kohl.vercel.app",
+    origin: "https://frontnew-psi.vercel.app",
     credentials: true,
   }),
 );
