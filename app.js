@@ -16,7 +16,6 @@ const https = require("https");
 const compression = require("compression");
 require("dotenv").config();
 
-//app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(
   cors({
