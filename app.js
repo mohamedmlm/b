@@ -29,7 +29,7 @@ const allowedOrigins = (() => {
 
 app.use(
   cors({
-    origin: "https://frontnew-lac.vercel.app",
+    origin: "https://frontnew-lac.vercel.app",//d
     credentials: true,
   }),
 );
