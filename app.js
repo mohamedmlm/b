@@ -19,7 +19,12 @@ require("dotenv").config();
 //app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(
-  c
+  cors({
+    origin: process.env.CORS_ORIGIN || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
 );
 
 app.use(hpp());
