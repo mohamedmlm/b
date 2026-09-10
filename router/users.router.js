@@ -17,7 +17,6 @@ const limiter = rateLimit({
 
 router.get("/all", token_verify, allowedto(role.MANAGER, role.ADMIN), getallusers);
 
-// ✅ limiter ضيف قبل uploadMiddleware عشان يمنع spam على /register (بيبعت إيميل)
 router.post('/register', limiter, uploadMiddleware, registerValidator, validationResult, register);
 
 router.post('/login', limiter, loginValidator, validationResult, login);
