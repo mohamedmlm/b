@@ -1,10 +1,13 @@
 const { put } = require("@vercel/blob");
-const santize = require("sanitize-filename");
+const sanitize = require("sanitize-filename");
+const path = require("path");
 
 async function uploadFileToBlob(file, folder = "items") {
-  const ext = file.mimetype.split("/")[1];
-  const safeName = santize(file.originalname);
-  const filename = `${folder}/${Date.now()}-${safeName}.${ext}`;
+  const originalExt = path.extname(file.originalname);
+  const safeBaseName = sanitize(path.basename(file.originalname, originalExt)) || "file";
+  const ext = originalExt || `.${file.mimetype.split("/")[1]}`;
+
+  const filename = `${folder}/${Date.now()}-${safeBaseName}${ext}`;
 
   const blob = await put(filename, file.buffer, {
     access: "public",
