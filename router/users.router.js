@@ -23,7 +23,6 @@ router.post('/register', limiter, uploadMiddleware, registerValidator, validatio
 router.post('/login', limiter, loginValidator, validationResult, login);
 router.get("/me", token_verify, getuser);
 
-// ✅ token_verify قبل uploadMiddleware عشان محدش يرفع ملفات من غير ما يبقى مسجل دخول
 router.patch("/edit", token_verify, uploadMiddleware, edituser);
 
 router.delete("/delete", token_verify, deleteuser);
