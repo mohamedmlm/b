@@ -24,7 +24,7 @@ const generateVerificationCode = () => {
 const setAuthCookie = (res, token) => {
   res.cookie("chater_token", token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "",
     secure: true,
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000,
