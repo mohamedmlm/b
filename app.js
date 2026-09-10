@@ -51,24 +51,7 @@ app.use(
   }),
 );
 
-const dirs = ["Uploads", "Uploads/avatar", "Uploads/items"];
-dirs.forEach((dir) => {
-  const fullPath = path.join(__dirname, dir);
-  if (!fs.existsSync(fullPath)) {
-    fs.mkdirSync(fullPath, { recursive: true });
-  }
-});
-
-app.use("/Avatar", express.static(path.join(__dirname, "Uploads/avatar")));
-app.use("/ItemImages", express.static(path.join(__dirname, "Uploads/items")));
 app.use(express.json());
-
-// Health check for quick runtime verification
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", time: Date.now() });
-});
-
-console.log("App initialization complete");
 
 app.use("/users", userRouter);
 app.use("/items", itemRouter);

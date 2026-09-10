@@ -2,6 +2,7 @@ const Items = require('../data/item.shema');
 const asyncwrapper = require("../modules/error/asyncwrapper");
 const sanitizeHtml = require('sanitize-html');
 const Comments = require('../data/comment.shema');
+const { uploadFilesToBlob } = require("../modules/uploadverification/blobi");
 
 const getAllItems = asyncwrapper(async (req, res) => {
     let pageNumber = parseInt(req.query.page) || 1;
@@ -10,8 +11,8 @@ const getAllItems = asyncwrapper(async (req, res) => {
 
     const search = req.query.search || "";
     const escapedSearch = sanitizeHtml(search, {
-         allowedTags: [], 
-        allowedAttributes: {} 
+        allowedTags: [],
+        allowedAttributes: {}
     });
 
     const minPrice = parseFloat(req.query.minPrice) || 0;
@@ -20,11 +21,11 @@ const getAllItems = asyncwrapper(async (req, res) => {
     const filter = {
         name: { $regex: escapedSearch, $options: "i" },
         price: { $gte: minPrice, $lte: maxPrice }
-      };
+    };
 
     const items = await Items.find(filter, { __v: false })
-    .skip(skipitem)
-    .limit(nmOfitemPerPage);
+        .skip(skipitem)
+        .limit(nmOfitemPerPage);
 
     const sanitizedItems = items.map(item => ({
         id: item._id,
@@ -41,7 +42,11 @@ const getAllItems = asyncwrapper(async (req, res) => {
 const createItem = asyncwrapper(async (req, res) => {
     const { name, description, min, max, price, category } = req.body;
 
-    const uploadedImages = req.files ? req.files.map(f => f.filename) : [];
+    // ✅ ارفع الصور على Vercel Blob
+    let uploadedImages = [];
+    if (req.files && req.files.length > 0) {
+        uploadedImages = await uploadFilesToBlob(req.files, "items");
+    }
 
     const sanitizedData = {
         name: sanitizeHtml(name),
@@ -50,15 +55,15 @@ const createItem = asyncwrapper(async (req, res) => {
         max,
         price,
         category: sanitizeHtml(category),
-        images: uploadedImages.map(img => sanitizeHtml(img))
+        images: uploadedImages
     };
 
     if (!sanitizedData.name || !sanitizedData.min || !sanitizedData.max || !sanitizedData.price || !sanitizedData.category || sanitizedData.images.length === 0) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
-    if (sanitizedData.max < sanitizedData.min){
-        return res.status(400).json({ error: "Max size must be bigger than min size" })
+    if (sanitizedData.max < sanitizedData.min) {
+        return res.status(400).json({ error: "Max size must be bigger than min size" });
     }
     if (isNaN(sanitizedData.price) || sanitizedData.price <= 0) {
         return res.status(400).json({ error: "Price must be a positive number" });
@@ -70,11 +75,15 @@ const createItem = asyncwrapper(async (req, res) => {
 const editItem = asyncwrapper(async (req, res) => {
     const { name, description, min, max, price, category } = req.body;
 
-    const uploadedImages = req.files ? req.files.map(f => f.filename) : [];
-
     const existingItem = await Items.findById(req.params.id);
     if (!existingItem) {
         return res.status(404).json({ error: "Item not found" });
+    }
+
+    // ✅ ارفع الصور الجديدة على Vercel Blob (لو في صور جديدة)
+    let uploadedImages = [];
+    if (req.files && req.files.length > 0) {
+        uploadedImages = await uploadFilesToBlob(req.files, "items");
     }
 
     const sanitizedData = {
@@ -84,15 +93,15 @@ const editItem = asyncwrapper(async (req, res) => {
         max,
         price,
         category: sanitizeHtml(category),
-        images: uploadedImages.length > 0 ? uploadedImages.map(img => sanitizeHtml(img)) : existingItem.images
+        images: uploadedImages.length > 0 ? uploadedImages : existingItem.images
     };
 
     if (!sanitizedData.name || !sanitizedData.min || !sanitizedData.max || !sanitizedData.price || !sanitizedData.category || !sanitizedData.images || sanitizedData.images.length === 0) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
-    if (sanitizedData.max < sanitizedData.min){
-        return res.status(400).json({ error: "Max size must be bigger than min size" })
+    if (sanitizedData.max < sanitizedData.min) {
+        return res.status(400).json({ error: "Max size must be bigger than min size" });
     }
 
     if (isNaN(sanitizedData.price) || sanitizedData.price <= 0) {
@@ -123,7 +132,7 @@ const editItem = asyncwrapper(async (req, res) => {
     res.status(200).json(item);
 });
 
-const deleteItem = asyncwrapper(async (req,res) => {
+const deleteItem = asyncwrapper(async (req, res) => {
     const item = await Items.findByIdAndDelete(req.params.id);
     if (!item) {
         return res.status(404).json({ error: "Item not found" });
@@ -180,4 +189,4 @@ module.exports = {
     deleteItem,
     getItemForEdit,
     getItemDetails
-}
+};
