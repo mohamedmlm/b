@@ -2,7 +2,7 @@ const Items = require('../data/item.shema');
 const asyncwrapper = require("../modules/error/asyncwrapper");
 const sanitizeHtml = require('sanitize-html');
 const Comments = require('../data/comment.shema');
-const { uploadFilesToBlob } = require("../");
+const { uploadFilesToBlob } = require("../modules/");
 const { del } = require("@vercel/blob");
 
 function escapeRegex(str) {
