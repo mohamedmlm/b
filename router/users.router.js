@@ -16,10 +16,16 @@ const limiter = rateLimit({
 });
 
 router.get("/all", token_verify, allowedto(role.MANAGER, role.ADMIN), getallusers);
-router.post('/register', uploadMiddleware, registerValidator, validationResult, register);
+
+// ✅ limiter ضيف قبل uploadMiddleware عشان يمنع spam على /register (بيبعت إيميل)
+router.post('/register', limiter, uploadMiddleware, registerValidator, validationResult, register);
+
 router.post('/login', limiter, loginValidator, validationResult, login);
 router.get("/me", token_verify, getuser);
-router.patch("/edit", uploadMiddleware, token_verify, edituser);
+
+// ✅ token_verify قبل uploadMiddleware عشان محدش يرفع ملفات من غير ما يبقى مسجل دخول
+router.patch("/edit", token_verify, uploadMiddleware, edituser);
+
 router.delete("/delete", token_verify, deleteuser);
 router.post("/verify-email-registiration",  limiter, verfication_register);
 router.post("/verify-email-login", limiter, verfication_login);
