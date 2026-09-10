@@ -6,7 +6,7 @@ const { register, login, getuser, edituser, deleteuser, getallusers, verfication
 const token_verify = require("../modules/authentication/tokenverify");
 const allowedto = require('../modules/authentication/allowedto');
 const role = require('../modules/authentication/role');
-const uploadMiddleware = require("../modules/upload_verification/");
+const uploadMiddleware = require("../modules/upload_verification/avatar");
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
