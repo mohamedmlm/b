@@ -57,7 +57,6 @@ const createPay = asyncwrapper(async (req, res) => {
         addressDetails: sanitizedAddress,
         min: minNum,
         max: maxNum,
-        callnumber: sanitizeHtml(callnumber || "", { allowedTags: [], allowedAttributes: {} }).trim(),
         ispayed: false
     });
 
