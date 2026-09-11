@@ -6,7 +6,6 @@ const asyncwrapper = require("../modules/error/asyncwrapper");
 const createPay = asyncwrapper(async (req, res) => {
     const {
         addressDetails,
-        callnumber,
         min: requestedMin,
         max: requestedMax
     } = req.body;
