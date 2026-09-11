@@ -64,6 +64,12 @@ const schema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    callnumber: {
+        type: String,
+        required: true,
+        minlength: 6,
+        maxlength: 20
     }
 });
 

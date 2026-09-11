@@ -5,6 +5,7 @@ const asyncwrapper = require("../modules/error/asyncwrapper");
 
 const createPay = asyncwrapper(async (req, res) => {
     const {
+        callnumber,
         addressDetails,
         min: requestedMin,
         max: requestedMax
@@ -54,6 +55,7 @@ const createPay = asyncwrapper(async (req, res) => {
         itemname: sanitizeHtml(item.name || "", { allowedTags: [], allowedAttributes: {} }).trim(),
         itemprice: item.price,
         itempicture: sanitizeHtml(itempicture || "", { allowedTags: [], allowedAttributes: {} }).trim(),
+        callnumber: sanitizeHtml(callnumber || "", { allowedTags: [], allowedAttributes: {} }).trim(),
         addressDetails: sanitizedAddress,
         min: minNum,
         max: maxNum,

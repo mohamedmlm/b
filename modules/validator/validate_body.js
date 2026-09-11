@@ -135,5 +135,9 @@ exports.payvalidator = [
     body('max')
     .notEmpty().withMessage('Item size is required')
     .isNumeric().withMessage('Item size must be a number')
-    .trim()
+    .trim(),
+    body('callnumber')
+    .notEmpty().withMessage('Call number is required')
+    .isString().withMessage('Call number must be a string')
+    .isLength({ min: 6, max: 20 }).withMessage('Call number must be between 6 and 20 characters')
 ]
