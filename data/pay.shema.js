@@ -65,10 +65,6 @@ const schema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    callnumber: {
-        type: String,
-        required: true
-    }
 });
 
 module.exports = mongoose.model('Pay', schema);
