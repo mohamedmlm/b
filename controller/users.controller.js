@@ -95,7 +95,6 @@ const register = asyncwrapper(async (req, res) => {
     verificationCode: hashedVerificationCode,
     role: process.env.MANAGER == email ? role.MANAGER : role.USER,
     isEmailVerified: false,
-    // ✅ req.file.blobUrl بدل req.file.filename (avatar.js دلوقتي بيرفع على Vercel Blob)
     avatar: req.file ? req.file.blobUrl : "profile.jpg",
     timetodeleteuser: Date.now() + 10 * 60 * 1000,
     notExpiredUntil: Date.now() + 10 * 60 * 1000,
