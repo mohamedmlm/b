@@ -55,7 +55,7 @@ const getAllItems = asyncwrapper(async (req, res) => {
 });
 
 const getitemsbycategorie = asyncwrapper(async (req,res) => {
-    const 
+
 })
 
 const createItem = asyncwrapper(async (req, res) => {
