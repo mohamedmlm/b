@@ -141,7 +141,6 @@ const getisnotpayed = asyncwrapper(async (req, res) => {
         timeFilter = olderFlag ? { createdAt: { $lte: threshold } } : { createdAt: { $gte: threshold } };
     }
 
-    // ✅ الطلبات المرفوضة متبقاش تظهر ضمن "غير المدفوعة" المستنية إجراء
     const pay = await Pay.find({ ispayed: false, isRejected: { $ne: true }, ...timeFilter }).sort({ createdAt: 1 });
 
     res.status(200).json({
