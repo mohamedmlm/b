@@ -61,7 +61,6 @@ const schema = new mongoose.Schema({
         required: true,
         default: false
     },
-    // ✅ جديد: حالة الرفض وسببه
     isRejected: {
         type: Boolean,
         required: true,
