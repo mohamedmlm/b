@@ -349,7 +349,7 @@ const edituser = asyncwrapper(async (req, res) => {
   }
 
   const isSameUser = editeduser.name === name && editeduser.avatar === avatar;
-  const { currentPassword, newPassword } = req.body;
+  const { newPassword } = req.body;
 
   if (isSameUser && !newPassword) {
     return res.status(400).json({
