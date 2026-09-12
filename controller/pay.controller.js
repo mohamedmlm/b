@@ -177,7 +177,6 @@ const confirmPay = asyncwrapper(async (req, res) => {
     });
 });
 
-// ✅ رفض الطلب — بنفس منطق الحماية الـ atomic بتاع confirmPay
 const rejectPay = asyncwrapper(async (req, res) => {
     const { payId } = req.params;
     const reason = sanitizeHtml(req.body.reason || "", {
