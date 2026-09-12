@@ -54,10 +54,6 @@ const getAllItems = asyncwrapper(async (req, res) => {
     res.status(200).json({ items: sanitizedItems });
 });
 
-const getitemsbycategorie = asyncwrapper(async (req,res) => {
-
-})
-
 const createItem = asyncwrapper(async (req, res) => {
     const { name, description, min, max, price, category } = req.body;
 
