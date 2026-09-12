@@ -333,8 +333,6 @@ const edituser = asyncwrapper(async (req, res) => {
   if (!editeduser) {
     return res.status(404).json({ msg: "User not found" });
   }
-
-  // ✅ req.file.blobUrl بدل req.file.filename (لسه محتفظين بالتعديل ده)
   const avatar = req.file ? req.file.blobUrl : editeduser.avatar;
 
   const name = sanitizeHtml(req.body.name || "", {
