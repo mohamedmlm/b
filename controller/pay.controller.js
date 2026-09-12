@@ -59,7 +59,8 @@ const createPay = asyncwrapper(async (req, res) => {
         addressDetails: sanitizedAddress,
         min: minNum,
         max: maxNum,
-        ispayed: false
+        ispayed: false,
+        isRejected: false
     });
 
     res.status(201).json({
@@ -140,29 +141,70 @@ const getisnotpayed = asyncwrapper(async (req, res) => {
         timeFilter = olderFlag ? { createdAt: { $lte: threshold } } : { createdAt: { $gte: threshold } };
     }
 
-    const pay = await Pay.find({ ispayed: false, ...timeFilter }).sort({ createdAt: 1 });
+    // ✅ الطلبات المرفوضة متبقاش تظهر ضمن "غير المدفوعة" المستنية إجراء
+    const pay = await Pay.find({ ispayed: false, isRejected: { $ne: true }, ...timeFilter }).sort({ createdAt: 1 });
 
     res.status(200).json({
         pays: pay
     });
 })
 
+// ✅ atomic: الشرط والتحديث في استعلام واحد، عشان منع أي race condition
+// (لو طلبين "تأكيد"/"رفض" جم في نفس اللحظة على نفس الـ pay، واحد بس ينجح)
 const confirmPay = asyncwrapper(async (req, res) => {
     const { payId } = req.params;
 
-    const pay = await Pay.findByIdAndUpdate(
-        payId, 
-        { ispayed: true }, 
+    const pay = await Pay.findOneAndUpdate(
+        { _id: payId, ispayed: false, isRejected: { $ne: true } },
+        { ispayed: true },
         { new: true }
     );
 
     if (!pay) {
-        return res.status(404).json({ message: 'Payment request not found' });
+        const existing = await Pay.findById(payId);
+        if (!existing) {
+            return res.status(404).json({ message: 'Payment request not found' });
+        }
+        if (existing.isRejected) {
+            return res.status(400).json({ message: 'Cannot confirm a payment request that has already been rejected' });
+        }
+        return res.status(400).json({ message: 'Payment request has already been confirmed' });
     }
 
     res.status(200).json({ 
         message: 'تم تأكيد الدفع بنجاح', 
         pay 
+    });
+});
+
+// ✅ رفض الطلب — بنفس منطق الحماية الـ atomic بتاع confirmPay
+const rejectPay = asyncwrapper(async (req, res) => {
+    const { payId } = req.params;
+    const reason = sanitizeHtml(req.body.reason || "", {
+        allowedTags: [],
+        allowedAttributes: {}
+    }).trim();
+
+    const pay = await Pay.findOneAndUpdate(
+        { _id: payId, ispayed: false, isRejected: { $ne: true } },
+        { isRejected: true, rejectionReason: reason },
+        { new: true }
+    );
+
+    if (!pay) {
+        const existing = await Pay.findById(payId);
+        if (!existing) {
+            return res.status(404).json({ message: 'Payment request not found' });
+        }
+        if (existing.ispayed) {
+            return res.status(400).json({ message: 'Cannot reject a payment request that has already been paid' });
+        }
+        return res.status(400).json({ message: 'Payment request has already been rejected' });
+    }
+
+    res.status(200).json({
+        message: 'تم رفض الطلب',
+        pay
     });
 });
 
@@ -172,5 +214,6 @@ module.exports = {
     getAllPays,
     getisnotpayed,
     confirmPay,
+    rejectPay,
     getMyPays
 };
