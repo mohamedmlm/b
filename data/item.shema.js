@@ -26,7 +26,7 @@ const itemSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true,
+        required: true
     },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
