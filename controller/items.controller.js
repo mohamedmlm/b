@@ -22,7 +22,6 @@ const getAllItems = asyncwrapper(async (req, res) => {
     let pageNumber = parseInt(req.query.page) || 1;
     const nmOfitemPerPage = parseInt(req.query.limit) || 10;
     const skipitem = (pageNumber - 1) * nmOfitemPerPage;
-    const {categoryquery} = req.query || "";
 
     const search = req.query.search || "";
     const escapedSearch = sanitizeHtml(search, {
@@ -31,14 +30,25 @@ const getAllItems = asyncwrapper(async (req, res) => {
     });
     const safeRegexSearch = escapeRegex(escapedSearch);
 
+    const categoryQuery = req.query.categoryquery || "";
+    const escapedCategory = sanitizeHtml(categoryQuery, {
+        allowedTags: [],
+        allowedAttributes: {}
+    });
+    const safeRegexCategory = escapeRegex(escapedCategory);
+
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER;
 
     const filter = {
         name: { $regex: safeRegexSearch, $options: "i" },
-        price: { $gte: minPrice, $lte: maxPrice },
-        category: {}
+        price: { $gte: minPrice, $lte: maxPrice }
     };
+
+    // ✅ نضيف شرط الـ category بس لو المستخدم فعلاً بعت قيمة له
+    if (safeRegexCategory) {
+        filter.category = { $regex: safeRegexCategory, $options: "i" };
+    }
 
     const items = await Items.find(filter, { __v: false })
         .skip(skipitem)
