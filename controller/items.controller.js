@@ -161,7 +161,6 @@ const editItem = asyncwrapper(async (req, res) => {
             message: "The new data is identical to the existing item"
         });
     }
-
     if (uploadedImages.length > 0 && existingItem.images && existingItem.images.length > 0) {
         await deleteBlobUrls(existingItem.images);
     }
