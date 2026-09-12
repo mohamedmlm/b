@@ -1,7 +1,6 @@
 const User = require("../data/user.shema");
 const bcrypt = require("bcryptjs");
 const { promisify } = require("util");
-// promisified wrappers so existing `await bcrypt.hash/compare` usage continues to work
 const bcryptHash = promisify(bcrypt.hash);
 const bcryptCompare = promisify(bcrypt.compare);
 const sanitizeHtml = require("sanitize-html");
@@ -333,7 +332,7 @@ const edituser = asyncwrapper(async (req, res) => {
   if (!editeduser) {
     return res.status(404).json({ msg: "User not found" });
   }
-  
+
   const avatar = req.file ? req.file.blobUrl : editeduser.avatar;
 
   const name = sanitizeHtml(req.body.name || "", {
@@ -352,7 +351,7 @@ const edituser = asyncwrapper(async (req, res) => {
     return res.status(400).json({ msg: "Password is required" });
   }
 
-  const isSameUser = editeduser.name === name && editeduser.avatar === avatar;
+  const isSameUser = editeduser.name === name && editeduser.avatar === avatar && await bcryptCompare(password, editeduser.password);
 
   if (isSameUser) {
     return res.status(400).json({
