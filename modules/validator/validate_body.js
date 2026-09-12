@@ -74,7 +74,6 @@ exports.itemValidator = [
         .withMessage("category must be between 3 and 30 characters")
         .notEmpty()
         .withMessage("category is required")
-        .en
 ];
 
 exports.commentsValidator = [
