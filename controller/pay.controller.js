@@ -148,8 +148,6 @@ const getisnotpayed = asyncwrapper(async (req, res) => {
     });
 })
 
-// ✅ atomic: الشرط والتحديث في استعلام واحد، عشان منع أي race condition
-// (لو طلبين "تأكيد"/"رفض" جم في نفس اللحظة على نفس الـ pay، واحد بس ينجح)
 const confirmPay = asyncwrapper(async (req, res) => {
     const { payId } = req.params;
 
