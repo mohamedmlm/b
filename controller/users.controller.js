@@ -349,8 +349,6 @@ const edituser = asyncwrapper(async (req, res) => {
   }
 
   const isSameUser = editeduser.name === name && editeduser.avatar === avatar;
-
-  // ✅ تغيير الباسورد بقى اختياري ومنفصل، ومحتاج الباسورد القديم كتأكيد
   const { currentPassword, newPassword } = req.body;
 
   if (isSameUser && !newPassword) {
