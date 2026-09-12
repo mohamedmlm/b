@@ -30,7 +30,7 @@ const getAllItems = asyncwrapper(async (req, res) => {
     });
     const safeRegexSearch = escapeRegex(escapedSearch);
 
-    const categoryQuery = req.query.categoryquery || "";
+    const categoryQuery = req.query.category || "";
     const escapedCategory = sanitizeHtml(categoryQuery, {
         allowedTags: [],
         allowedAttributes: {}
