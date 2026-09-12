@@ -334,7 +334,7 @@ const edituser = asyncwrapper(async (req, res) => {
     return res.status(404).json({ msg: "User not found" });
   }
 
-  // ✅ req.file.blobUrl بدل req.file.filename
+  // ✅ req.file.blobUrl بدل req.file.filename (لسه محتفظين بالتعديل ده)
   const avatar = req.file ? req.file.blobUrl : editeduser.avatar;
 
   const name = sanitizeHtml(req.body.name || "", {
@@ -348,51 +348,36 @@ const edituser = asyncwrapper(async (req, res) => {
       .json({ msg: "Name must be at least 3 characters and at max 20" });
   }
 
+  const password = req.body.password;
+  if (!password) {
+    return res.status(400).json({ msg: "Password is required" });
+  }
+
   const isSameUser = editeduser.name === name && editeduser.avatar === avatar;
 
-  // ✅ تغيير الباسورد بقى اختياري ومنفصل، ومحتاج الباسورد القديم كتأكيد
-  const { currentPassword, newPassword } = req.body;
-
-  if (isSameUser && !newPassword) {
+  if (isSameUser) {
     return res.status(400).json({
       message: "The new data is identical to the existing user",
     });
   }
 
-  if (newPassword) {
-    if (!currentPassword) {
-      return res
-        .status(400)
-        .json({ msg: "Current password is required to set a new password" });
-    }
-
-    const isPasswordMatch = await bcryptCompare(
-      currentPassword,
-      editeduser.password,
-    );
-    if (!isPasswordMatch) {
-      return res.status(400).json({ msg: "Current password is incorrect" });
-    }
-
-    const passwordStrength = measurePasswordStrength(newPassword);
-    if (
-      passwordStrength.level !== "strong" &&
-      passwordStrength.level !== "very strong"
-    ) {
-      return res.status(400).json({
-        msg: "Please choose a stronger password",
-      });
-    }
-    if (newPassword.length < 8 || newPassword.length > 25) {
-      return res.status(400).json({
-        msg: "Password must be at least 8 characters and at max 25",
-      });
-    }
-
-    editeduser.password = await bcryptHash(newPassword, 10);
+  const passwordStrength = measurePasswordStrength(password);
+  if (
+    passwordStrength.level !== "strong" &&
+    passwordStrength.level !== "very strong"
+  ) {
+    return res.status(400).json({
+      msg: "Please choose a stronger password",
+    });
+  }
+  if (password.length < 8 || password.length > 25) {
+    return res
+      .status(400)
+      .json({ msg: "Password must be at least 8 characters and at max 25" });
   }
 
   editeduser.name = name;
+  editeduser.password = await bcryptHash(password, 10);
   editeduser.avatar = avatar;
   await editeduser.save();
   res.status(200).json({ msg: "User updated successfully" });
