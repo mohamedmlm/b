@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { ENUM } = require('mysql/lib/protocol/constants/types');
 
 const itemSchema = new mongoose.Schema({
     name: {
@@ -28,7 +27,6 @@ const itemSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        ENUM
     },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
