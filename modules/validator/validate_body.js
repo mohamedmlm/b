@@ -141,3 +141,14 @@ exports.payvalidator = [
     .isString().withMessage('Call number must be a string')
     .isLength({ min: 6, max: 20 }).withMessage('Call number must be between 6 and 20 characters')
 ]
+
+exports.rejectPayValidator = [
+    param('payId')
+        .notEmpty().withMessage('Payment ID is required')
+        .isMongoId().withMessage('Payment ID must be a valid MongoDB ID'),
+ 
+    body('reason')
+        .optional()
+        .isString().withMessage('Reason must be a string')
+        .isLength({ max: 200 }).withMessage('Reason must be less than 200 characters'),
+];
