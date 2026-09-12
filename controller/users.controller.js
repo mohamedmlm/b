@@ -404,6 +404,7 @@ const deleteuser = asyncwrapper(async (req, res) => {
   const blockingPay = await Pay.findOne({
     username,
     ispayed: false,
+    isRejected: false,
     createdAt: { $lte: new Date(Date.now() - 30 * 60 * 1000) },
   });
 
