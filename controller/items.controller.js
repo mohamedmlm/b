@@ -22,7 +22,7 @@ const getAllItems = asyncwrapper(async (req, res) => {
     let pageNumber = parseInt(req.query.page) || 1;
     const nmOfitemPerPage = parseInt(req.query.limit) || 10;
     const skipitem = (pageNumber - 1) * nmOfitemPerPage;
-    const category
+    const categor
 
     const search = req.query.search || "";
     const escapedSearch = sanitizeHtml(search, {
