@@ -162,7 +162,6 @@ const editItem = asyncwrapper(async (req, res) => {
         });
     }
 
-    // لو اتحطت صور جديدة، امسح الصور القديمة من الـ Blob
     if (uploadedImages.length > 0 && existingItem.images && existingItem.images.length > 0) {
         await deleteBlobUrls(existingItem.images);
     }
