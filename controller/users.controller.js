@@ -95,7 +95,7 @@ const register = asyncwrapper(async (req, res) => {
     verificationCode: hashedVerificationCode,
     role: process.env.MANAGER.split(',').map(e => e.trim().toLowerCase()).includes(email.toLowerCase())? role.MANAGER: role.USER,   
     isEmailVerified: false,
-    avatar: req.file ? req.file.blobUrl : "profile.jp",
+    avatar: req.file ? req.file.blobUrl : ".jp",
     timetodeleteuser: Date.now() + 10 * 60 * 1000,
     notExpiredUntil: Date.now() + 10 * 60 * 1000,
   });
