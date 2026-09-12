@@ -37,7 +37,9 @@ const getAllItems = asyncwrapper(async (req, res) => {
     const filter = {
         name: { $regex: safeRegexSearch, $options: "i" },
         price: { $gte: minPrice, $lte: maxPrice },
-        category
+        category: {
+            
+        }
     };
 
     const items = await Items.find(filter, { __v: false })
