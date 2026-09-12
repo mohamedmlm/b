@@ -45,7 +45,6 @@ const getAllItems = asyncwrapper(async (req, res) => {
         price: { $gte: minPrice, $lte: maxPrice }
     };
 
-    // ✅ نضيف شرط الـ category بس لو المستخدم فعلاً بعت قيمة له
     if (safeRegexCategory) {
         filter.category = { $regex: safeRegexCategory, $options: "i" };
     }
