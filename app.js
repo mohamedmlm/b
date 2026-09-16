@@ -13,7 +13,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: ["https://crocsstorefm.vercel.app", "https://crocsstorefm.pages.dev"],
+    origin: ["https://crocsstorefm.vercel.app", "https://crocsstorefm.pages.dev/"],
     credentials: true,
   })
 );
