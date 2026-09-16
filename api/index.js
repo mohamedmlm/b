@@ -1,12 +1,12 @@
-const app = require("../app");
-const connectDB = require("../data/db");
+// server.js
+const app = require("./app");
+const connectDB = require("./data/db");
 
-module.exports = async (req, res) => {
-  try {
-    await connectDB();
-  } catch (error) {
-    console.error("Failed to connect to database:", error);
-    return res.status(500).json({ message: "Database connection failed" });
-  }
-  return app(req, res);
-};
+const PORT = process.env.PORT || 3000;
+
+// ✅ الاتصال بالـ DB مرة واحدة عند التشغيل
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+});   
