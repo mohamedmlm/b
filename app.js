@@ -45,14 +45,6 @@ app.use(
   })
 );
 
-const PORT = process.env.PORT || 3000;
-
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-});   
-
 app.use(express.json({ limit: "1mb" }));
 
 app.use("/users", userRouter);
