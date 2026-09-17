@@ -2,8 +2,7 @@ const Items = require('../data/item.shema');
 const asyncwrapper = require("../modules/error/asyncwrapper");
 const sanitizeHtml = require('sanitize-html');
 const Comments = require('../data/comment.shema');
-const { uploadFilesToBlob } = require("../modules/upload_verification/blobi");
-const { del } = require("@vercel/blob");
+const { uploadFilesToBlob, deleteFileFromBlob } = require("../modules/upload_verification/blobi");
 
 function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -12,7 +11,7 @@ function escapeRegex(str) {
 async function deleteBlobUrls(urls = []) {
     if (!urls.length) return;
     try {
-        await Promise.all(urls.map((url) => del(url)));
+        await Promise.all(urls.map((url) => deleteFileFromBlob(url)));
     } catch (err) {
         console.log("Failed to delete blob(s):", err);
     }
