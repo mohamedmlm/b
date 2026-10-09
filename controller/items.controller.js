@@ -2,7 +2,8 @@ const Items = require('../data/item.shema');
 const asyncwrapper = require("../modules/error/asyncwrapper");
 const sanitizeHtml = require('sanitize-html');
 const Comments = require('../data/comment.shema');
-const { uploadFilesToBlob, deleteFileFromBlob } = require("../modules/upload_verification/blobi");
+const { uploadFilesToBlob } = require("../modules/upload_verification/blobi");
+const { del } = require("@vercel/blob");
 
 function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -11,7 +12,7 @@ function escapeRegex(str) {
 async function deleteBlobUrls(urls = []) {
     if (!urls.length) return;
     try {
-        await Promise.all(urls.map((url) => deleteFileFromBlob(url)));
+        await Promise.all(urls.map((url) => del(url)));
     } catch (err) {
         console.log("Failed to delete blob(s):", err);
     }
@@ -29,13 +30,6 @@ const getAllItems = asyncwrapper(async (req, res) => {
     });
     const safeRegexSearch = escapeRegex(escapedSearch);
 
-    const categoryQuery = req.query.category || "";
-    const escapedCategory = sanitizeHtml(categoryQuery, {
-        allowedTags: [],
-        allowedAttributes: {}
-    });
-    const safeRegexCategory = escapeRegex(escapedCategory);
-
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER;
 
@@ -43,10 +37,6 @@ const getAllItems = asyncwrapper(async (req, res) => {
         name: { $regex: safeRegexSearch, $options: "i" },
         price: { $gte: minPrice, $lte: maxPrice }
     };
-
-    if (safeRegexCategory) {
-        filter.category = { $regex: safeRegexCategory, $options: "i" };
-    }
 
     const items = await Items.find(filter, { __v: false })
         .skip(skipitem)
@@ -160,6 +150,8 @@ const editItem = asyncwrapper(async (req, res) => {
             message: "The new data is identical to the existing item"
         });
     }
+
+    // لو اتحطت صور جديدة، امسح الصور القديمة من الـ Blob
     if (uploadedImages.length > 0 && existingItem.images && existingItem.images.length > 0) {
         await deleteBlobUrls(existingItem.images);
     }
