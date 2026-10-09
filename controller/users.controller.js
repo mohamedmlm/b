@@ -86,23 +86,15 @@ const register = asyncwrapper(async (req, res) => {
     return res.status(500).json({ msg: "Failed to send verification email" });
   }
 
-  // ✅ حماية من عدم وجود process.env.MANAGER (كانت بتكسر كل عملية تسجيل)
-  const managerEmails = (process.env.MANAGER || "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
   await User.create({
     name,
     username,
     email,
     password: hashedPassword,
     verificationCode: hashedVerificationCode,
-    role: managerEmails.includes(email.toLowerCase()) ? role.MANAGER : role.USER,
+    role: (process.env.MANAGER || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean).includes(email.toLowerCase()) ? role.MANAGER : role.USER,
     isEmailVerified: false,
-    // ✅ الأفضل تحط رابط صورة الأفاتار الافتراضية بتاعة R2 هنا بدل الرابط القديم،
-    // أو استخدم process.env.DEFAULT_AVATAR_URL بدل الرابط الثابت
-    avatar: req.file ? req.file.blobUrl : (process.env.DEFAULT_AVATAR_URL || "https://kicpins8h8qimv0h.public.blob.vercel-storage.com/avatar/profile.jpg"),
+    avatar: req.file ? req.file.blobUrl : "https://kicpins8h8qimv0h.public.blob.vercel-storage.com/avatar/profile.jpg",
     timetodeleteuser: Date.now() + 10 * 60 * 1000,
     notExpiredUntil: Date.now() + 10 * 60 * 1000,
   });
