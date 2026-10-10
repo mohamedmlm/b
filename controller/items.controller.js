@@ -33,10 +33,20 @@ const getAllItems = asyncwrapper(async (req, res) => {
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER;
 
+    const rawCategory = req.query.category || req.query.categoryquery || "";
+    const cleanCategory = sanitizeHtml(String(rawCategory), {
+        allowedTags: [],
+        allowedAttributes: {}
+    }).trim();
+    const safeRegexCategory = escapeRegex(cleanCategory);
+
     const filter = {
         name: { $regex: safeRegexSearch, $options: "i" },
         price: { $gte: minPrice, $lte: maxPrice }
     };
+    if (safeRegexCategory) {
+        filter.category = { $regex: safeRegexCategory, $options: "i" };
+    }
 
     const items = await Items.find(filter, { __v: false })
         .skip(skipitem)
