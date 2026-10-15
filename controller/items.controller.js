@@ -46,7 +46,7 @@ const getAllItems = asyncwrapper(async (req, res) => {
     };
     if (safeRegexCategory) {
         filter.category = safeRegexCategory;
-}   
+    }   
 
     const items = await Items.find(filter, { __v: false })
         .skip(skipitem)
